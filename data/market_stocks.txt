@@ -1,0 +1,20 @@
+APPL|Abble Inc.|182.50
+GOGL|Alphabit Inc.|148.20
+MSFT|Microsift Corp.|415.60
+AMZN|Amazone.com Inc.|175.40
+TSLA|Tessla Motors|195.80
+META|Mata Platforms|492.15
+NVDA|Nvidiaa Corp.|875.30
+NFLX|Netfliz Inc.|610.45
+DISN|Disnay Co.|112.35
+SBUX|Starbux Coffee|92.80
+NKE|Nikey Inc.|98.65
+MCD|McDonolds Corp.|282.10
+COCA|Coka-Cola Co.|60.25
+PEPS|Pepsico Corp.|168.40
+FORD|Fourd Motor Co.|12.15
+BOEG|Boeingy Aerospace|185.90
+AMEX|Amex Express|220.75
+JPM|JPMorzan Chase|192.40
+WMT|Walmurt Inc.|60.85
+COST|Costko Wholesale|725.50

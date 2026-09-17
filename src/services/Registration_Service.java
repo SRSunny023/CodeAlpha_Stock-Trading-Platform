@@ -26,6 +26,8 @@ public class Registration_Service {
 
     );
 
+    private static final String INITIAL_BALANCE = "1000";
+
     public Registration_Service(String email, String password, String confirmPassword, String name){
 
         boolean isValidEmail = validateEmailAddress(email);
@@ -98,7 +100,7 @@ public class Registration_Service {
                     continue;
                 }
                 String[] parts = line.split("\\|",-1);
-                if(parts.length>=3 && email.trim().equalsIgnoreCase(parts[0].trim())){
+                if(parts.length>=Global_Variables.INITIAL_USER_DETAILS_LENGTH && email.trim().equalsIgnoreCase(parts[0].trim())){
                     return true;
                 }
             }
@@ -128,7 +130,11 @@ public class Registration_Service {
                 System.out.println("File created: " + filePath.toAbsolutePath());
             }
 
-            Files.writeString(filePath, email + "|" + password + "|" + name + "||" + System.lineSeparator() , StandardOpenOption.APPEND);
+            Files.writeString(
+                filePath,
+                email + "|" + password + "|" + name + "|" + INITIAL_BALANCE + "||" + System.lineSeparator() ,
+                StandardOpenOption.APPEND
+            );
 
             return true;
 

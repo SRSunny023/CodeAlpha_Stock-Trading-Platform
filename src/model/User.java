@@ -7,11 +7,20 @@ public class User {
     private String name;
     private String country;
     private String phoneNumber;
+    private String balance;
 
-    public User(String email, String password, String name, String country, String phoneNumber){
+    public User(
+        String email,
+        String password,
+        String name,
+        String balance,
+        String country,
+        String phoneNumber
+    ){
         this.email = email;
         this.password = password;
         this.name = name;
+        this.balance = balance;
         this.country = country;
         this.phoneNumber = phoneNumber;
     }
@@ -26,6 +35,10 @@ public class User {
 
     public String getName(){
         return this.name;
+    }
+
+    public String getBalance(){
+        return this.balance;
     }
 
     public String getCountry(){
@@ -46,6 +59,10 @@ public class User {
 
     public void setName(String name){
         this.name = name;
+    }
+
+    public void setBalance(String balance){
+        this.balance = balance;
     }
 
     public void setCountry(String country){

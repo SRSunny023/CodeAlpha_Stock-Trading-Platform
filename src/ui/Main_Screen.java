@@ -16,7 +16,7 @@ public class Main_Screen {
     }
 
     public static void main(String[] args){
-        User mockUser = new User("test@gmail.com", "pass123", "John Doe", "+123456", "Bangladesh");
+        User mockUser = new User("test@gmail.com", "pass123", "John Doe", "1000", "+123456", "Bangladesh");
         new Main_Screen(mockUser);
     }
 
