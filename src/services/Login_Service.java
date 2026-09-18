@@ -1,7 +1,6 @@
 package services;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -44,21 +43,22 @@ public class Login_Service {
 
     private boolean checkDuplicateEmail(String email){
 
-        File file = new File(Global_Variables.USER_LIST_FILE);
+        Path folderPath = Paths.get(Global_Variables.DATA_FOLDER);
+        Path filePath = folderPath.resolve(Global_Variables.USER_LIST_FILE);
 
-        if(!file.exists()){
+        if(Files.notExists(folderPath) || Files.notExists(filePath)){
             return false;
         }
 
-        try(BufferedReader br = new BufferedReader(new FileReader(file))){
+        try(BufferedReader br = new BufferedReader(new FileReader(filePath.toFile()))){
 
             String line;
             while((line=br.readLine())!=null){
                 if(line.trim().isEmpty()){
                     continue;
                 }
-                String[] parts = line.split("\\|",-1);
-                if(parts.length>=Global_Variables.USER_DETAILS_LENGTH && email.trim().equalsIgnoreCase(parts[0].trim())){
+                String[] parts = line.split("\\|");
+                if(parts.length>0 && parts[0].trim().equalsIgnoreCase(email.trim())){
                     return true;
                 }
             }
@@ -73,21 +73,22 @@ public class Login_Service {
 
     private boolean checkPasswordMatch(String email, String password){
 
-        File file = new File(Global_Variables.USER_LIST_FILE);
+        Path folderPath = Paths.get(Global_Variables.DATA_FOLDER);
+        Path filePath = folderPath.resolve(Global_Variables.USER_LIST_FILE);
 
-        if(!file.exists()){
+        if(Files.notExists(folderPath) || Files.notExists(filePath)){
             return false;
         }
 
-        try(BufferedReader br = new BufferedReader(new FileReader(file))){
+        try(BufferedReader br = new BufferedReader(new FileReader(filePath.toFile()))){
 
             String line;
             while((line=br.readLine())!=null){
                 if(line.trim().isEmpty()){
                     continue;
                 }
-                String[] parts = line.split("\\|",-1);
-                if(parts.length>=Global_Variables.USER_DETAILS_LENGTH && parts[0].trim().equalsIgnoreCase(email) && password.trim().equals(parts[1].trim())){
+                String[] parts = line.split("\\|");
+                if(parts.length>0 && parts[0].trim().equalsIgnoreCase(email) && password.trim().equals(parts[1].trim())){
                     return true;
                 }
             }
@@ -109,12 +110,10 @@ public class Login_Service {
 
             if(Files.notExists(folderPath)){
                 Files.createDirectories(folderPath);
-                System.out.println("Directory created: " + folderPath.toAbsolutePath());
             }
 
             if(Files.notExists(filePath)){
                 Files.createFile(filePath);
-                System.out.println("File created: " + filePath.toAbsolutePath());
             }
 
             Files.writeString(filePath, email, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
@@ -132,9 +131,10 @@ public class Login_Service {
 
     private User fetchUserProfile(String email){
 
-        Path filePath = Paths.get(Global_Variables.USER_LIST_FILE);
+        Path folderPath = Paths.get(Global_Variables.DATA_FOLDER);
+        Path filePath = folderPath.resolve(Global_Variables.USER_LIST_FILE);
 
-        if(Files.notExists(filePath)){
+        if(Files.notExists(folderPath) || Files.notExists(filePath)){
             return null;
         }
 
@@ -145,16 +145,16 @@ public class Login_Service {
                 if(line.trim().isEmpty()){
                     continue;
                 }
-                String[] parts = line.split("\\|",-1);
+                String[] parts = line.split("\\|");
 
-                if(parts.length>=Global_Variables.USER_DETAILS_LENGTH && parts[0].trim().equalsIgnoreCase(email.trim())){
+                if(parts.length>0 && parts[0].trim().equalsIgnoreCase(email.trim())){
 
                     String userEmail = parts[0].trim();
                     String userPassword = parts[1].trim();
                     String userName = parts[2].trim();
                     String userBalance = parts[3].trim();
-                    String userCountry = parts[4].trim();
-                    String userPhone = parts[5].trim();
+                    String userCountry = parts.length>4 ? parts[4].trim() : "";
+                    String userPhone = parts.length>5 ? parts[5].trim() : "";
 
                     return new User(userEmail,userPassword,userName,userBalance,userCountry,userPhone);
 
@@ -168,10 +168,6 @@ public class Login_Service {
 
         return null;
 
-    }
-
-    public static void main(String[] args){
-        new Login_Service("user2@gmail.com", "User@222");
     }
 
 }

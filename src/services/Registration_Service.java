@@ -1,7 +1,6 @@
 package services;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -86,13 +85,14 @@ public class Registration_Service {
 
     public boolean checkDuplicateEmail(String email){
 
-        File file = new File(Global_Variables.USER_LIST_FILE);
+        Path folderPath = Paths.get(Global_Variables.DATA_FOLDER);
+        Path filePath = folderPath.resolve(Global_Variables.USER_LIST_FILE);
 
-        if(!file.exists()){
+        if(Files.notExists(folderPath) || Files.notExists(filePath)){
             return false;
         }
 
-        try(BufferedReader br = new BufferedReader(new FileReader(file))){
+        try(BufferedReader br = new BufferedReader(new FileReader(filePath.toFile()))){
 
             String line;
             while((line=br.readLine())!=null){
@@ -100,7 +100,7 @@ public class Registration_Service {
                     continue;
                 }
                 String[] parts = line.split("\\|");
-                if(parts.length>=Global_Variables.USER_DETAILS_LENGTH && email.trim().equalsIgnoreCase(parts[0].trim())){
+                if(parts.length>0 && email.trim().equalsIgnoreCase(parts[0].trim())){
                     return true;
                 }
             }
@@ -145,10 +145,6 @@ public class Registration_Service {
 
         return false;
 
-    }
-
-    public static void main(String[] args){
-        new Registration_Service("user2@gmail.com", "User@222", "User@222", "mr.user2");
     }
 
 }

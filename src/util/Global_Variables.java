@@ -8,8 +8,8 @@ public class Global_Variables {
 
     public static final String SPLASH_ICON = RESOURCES_FOLDER + "Welcome.png";
 
-    public static final String USER_LIST_FILE = DATA_FOLDER + "user_list.txt";
-    public static final String CURRENT_SESSION = DATA_FOLDER + "current_session.txt";
+    public static final String USER_LIST_FILE ="user_list.txt";
+    public static final String CURRENT_SESSION ="current_session.txt";
 
     public static final int USER_DETAILS_LENGTH = 6;
 

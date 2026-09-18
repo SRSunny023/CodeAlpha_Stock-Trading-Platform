@@ -2,24 +2,10 @@ package auth;
 
 public class Registration{
 
-    public Registration(){
+    public Registration(String email, String password, String confirmPassword, String name){
 
-        System.out.println("Email: user@gmail.com");
-        System.out.println("Password: user");
-        System.out.println("Confirm Password: user");
-        System.out.println("Name: mr.user");
-        System.out.println("Registration");
-        System.out.println("Back");
-        System.out.println("Exit");
+        new services.Registration_Service(email, password, confirmPassword, name);
 
-        System.out.println("Clicked on Registration");
-
-        new services.Registration_Service("mock@gmail.com", "Mock@111", "Mock@111", "mr.mock");
-
-    }
-
-    public static void main(String[] args){
-        new Registration();
     }
 
 }
