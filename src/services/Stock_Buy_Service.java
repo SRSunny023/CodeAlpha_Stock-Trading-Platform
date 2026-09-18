@@ -47,6 +47,8 @@ public class Stock_Buy_Service {
 
             System.out.println("Stock Purchase Successfully");
 
+            new User_Balance_Update_Service(user);
+
         } else{
 
             System.out.println("Stock Purchase Failed");

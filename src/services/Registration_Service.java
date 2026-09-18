@@ -99,8 +99,8 @@ public class Registration_Service {
                 if(line.trim().isEmpty()){
                     continue;
                 }
-                String[] parts = line.split("\\|",-1);
-                if(parts.length>=Global_Variables.INITIAL_USER_DETAILS_LENGTH && email.trim().equalsIgnoreCase(parts[0].trim())){
+                String[] parts = line.split("\\|");
+                if(parts.length>=Global_Variables.USER_DETAILS_LENGTH && email.trim().equalsIgnoreCase(parts[0].trim())){
                     return true;
                 }
             }
@@ -132,7 +132,7 @@ public class Registration_Service {
 
             Files.writeString(
                 filePath,
-                email + "|" + password + "|" + name + "|" + INITIAL_BALANCE + "||" + System.lineSeparator() ,
+                email + "|" + password + "|" + name + "|" + INITIAL_BALANCE + "|" + "" + "|" + "" + System.lineSeparator(),
                 StandardOpenOption.APPEND
             );
 

@@ -58,7 +58,7 @@ public class Login_Service {
                     continue;
                 }
                 String[] parts = line.split("\\|",-1);
-                if(parts.length>=Global_Variables.INITIAL_USER_DETAILS_LENGTH && email.trim().equalsIgnoreCase(parts[0].trim())){
+                if(parts.length>=Global_Variables.USER_DETAILS_LENGTH && email.trim().equalsIgnoreCase(parts[0].trim())){
                     return true;
                 }
             }
@@ -87,7 +87,7 @@ public class Login_Service {
                     continue;
                 }
                 String[] parts = line.split("\\|",-1);
-                if(parts.length>=Global_Variables.INITIAL_USER_DETAILS_LENGTH && parts[0].trim().equalsIgnoreCase(email) && password.trim().equals(parts[1].trim())){
+                if(parts.length>=Global_Variables.USER_DETAILS_LENGTH && parts[0].trim().equalsIgnoreCase(email) && password.trim().equals(parts[1].trim())){
                     return true;
                 }
             }
@@ -147,14 +147,14 @@ public class Login_Service {
                 }
                 String[] parts = line.split("\\|",-1);
 
-                if(parts.length>=Global_Variables.INITIAL_USER_DETAILS_LENGTH && parts[0].trim().equalsIgnoreCase(email.trim())){
+                if(parts.length>=Global_Variables.USER_DETAILS_LENGTH && parts[0].trim().equalsIgnoreCase(email.trim())){
 
                     String userEmail = parts[0].trim();
                     String userPassword = parts[1].trim();
                     String userName = parts[2].trim();
                     String userBalance = parts[3].trim();
-                    String userCountry = (parts.length > 4) ? parts[4].trim() : "";
-                    String userPhone = (parts.length > 5) ? parts[5].trim() : "";
+                    String userCountry = parts[4].trim();
+                    String userPhone = parts[5].trim();
 
                     return new User(userEmail,userPassword,userName,userBalance,userCountry,userPhone);
 

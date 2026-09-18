@@ -14,7 +14,7 @@ public class Registration{
 
         System.out.println("Clicked on Registration");
 
-        new services.Registration_Service("user@gmail.com", "User@111", "User@111", "mr.user");
+        new services.Registration_Service("mock@gmail.com", "Mock@111", "Mock@111", "mr.mock");
 
     }
 
