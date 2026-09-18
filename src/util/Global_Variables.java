@@ -4,6 +4,9 @@ public class Global_Variables {
 
     public static final String DATA_FOLDER = "data/";
     public static final String PORTFOLIO_FOLDER = DATA_FOLDER + "portfolio/";
+    public static final String RESOURCES_FOLDER = "resources/";
+
+    public static final String SPLASH_ICON = RESOURCES_FOLDER + "Welcome.png";
 
     public static final String USER_LIST_FILE = DATA_FOLDER + "user_list.txt";
     public static final String CURRENT_SESSION = DATA_FOLDER + "current_session.txt";

@@ -105,7 +105,7 @@ public class Login_Service {
         try{
 
             Path folderPath = Paths.get(Global_Variables.DATA_FOLDER);
-            Path filePath = Paths.get(Global_Variables.CURRENT_SESSION);
+            Path filePath = folderPath.resolve(Global_Variables.CURRENT_SESSION);
 
             if(Files.notExists(folderPath)){
                 Files.createDirectories(folderPath);
