@@ -32,15 +32,10 @@ public class Transaction_History_Service {
 
         if(!transactions.isEmpty()){
             for(Transaction transaction : transactions){
-                model.addRow(new Object[]{transaction.getSymbol(), transaction.shares(), transaction.totalCost() + "$", transaction.action()});
+                model.addRow(new Object[]{transaction.getSymbol(), transaction.shares(), String.format("%.2f$", transaction.totalCost()), transaction.action()});
             }
             labels[2].setText(transactions.size() + " ( " + totalBuys + " Buys / " + totalSells + " Sells)");
             labels[3].setText(String.format("%.2f$", totalMoney));
-        } else{
-            System.out.println("TRANSACTION HISTORY REPORT");
-            System.out.println("Account Owner: " + user.getName());
-            System.out.println(" [!] No trade history found for this account.");
-            System.out.println("=========================");
         }
 
     }

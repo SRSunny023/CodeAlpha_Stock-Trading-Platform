@@ -39,7 +39,7 @@ public class Stock_Buy_Service {
 
         if(totalPrice>userBalance){
             JOptionPane.showMessageDialog(parentFrame,
-                "You don't have enough money to buy. You need " + (totalPrice-userBalance) + " more money to buy",
+                "You don't have enough money to buy. You need " + String.format("%.2f$", totalPrice-userBalance) + " more money to buy",
                 "Transaction Failed",
                 JOptionPane.ERROR_MESSAGE
             );
@@ -61,7 +61,7 @@ public class Stock_Buy_Service {
         boolean success = balanceUpdate.updateBalance();
 
         if(success){
-            JOptionPane.showMessageDialog(parentFrame, "Stock Purchase Successfully", "Transaction Successfull", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(parentFrame, "Stock Purchase Successfully", "Transaction Successful", JOptionPane.INFORMATION_MESSAGE);
             return true;
         } else{
             user.setBalance(Double.toString(userBalance));
@@ -113,10 +113,12 @@ public class Stock_Buy_Service {
                         continue;
                     }
                     String[] parts = line.split("\\|");
-                    if(parts.length>=2 && parts[0].equals(stock.getSymbol())){
+                    if(parts.length>=3 && parts[0].equals(stock.getSymbol())){
                         int oldAmount = Integer.parseInt(parts[1]);
                         int newAmount = oldAmount + amount;
-                        line = parts[0] + "|" + newAmount;
+                        double oldTotalPrice = Double.parseDouble(parts[2]);
+                        double newTotalPrice = oldTotalPrice + totalPrice;
+                        line = parts[0] + "|" + newAmount + "|" + newTotalPrice;
                         updated = true;
                     }
                     content.append(line);
@@ -134,7 +136,7 @@ public class Stock_Buy_Service {
 
             } else{
                 Files.writeString(filePath,
-                    stock.getSymbol() + "|" + amount + System.lineSeparator(),
+                    stock.getSymbol() + "|" + amount + "|" + totalPrice + System.lineSeparator(),
                     StandardOpenOption.APPEND
                 );
             }

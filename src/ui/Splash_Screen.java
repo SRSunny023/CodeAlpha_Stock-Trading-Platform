@@ -5,7 +5,6 @@ import java.awt.Image;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 import util.Global_Variables;
@@ -50,10 +49,6 @@ public class Splash_Screen extends JFrame {
 
         setVisible(true);
 
-    }
-
-    public static void main(String[] args){
-        SwingUtilities.invokeLater(() -> new Splash_Screen());
     }
 
 }

@@ -42,7 +42,7 @@ public class Login_Service {
         if(updateCurrentSession(email)){
             loggedInUser = fetchUserProfile(email);
             if(loggedInUser!=null){
-                JOptionPane.showMessageDialog(parentFrame, "Logging in Successfull!", "Logged In", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(parentFrame, "Logging in Successful!", "Logged In", JOptionPane.INFORMATION_MESSAGE);
                 parentFrame.setVisible(false);
                 parentFrame.dispose();
                 SwingUtilities.invokeLater(() -> new Main_Screen(loggedInUser));

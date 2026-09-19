@@ -150,8 +150,4 @@ public class Login_Screen extends JFrame implements ActionListener {
 
     }
 
-    public static void main(String[] args){
-        SwingUtilities.invokeLater(() -> new Login_Screen());
-    }
-
 }

@@ -33,10 +33,16 @@ public class Portfolio_Viewer_Service {
 
         if(portfolios.size()>0){
             for(Portfolio portfolio : portfolios){
-                model.addRow(new Object[]{portfolio.getSymbol(), portfolio.getShares(), portfolio.getPrice() + "$", portfolio.getTotalValue() + "$", "Sell"});
+                double profit = portfolio.getTotalValue() - portfolio.getInitialTotalValue();
+                model.addRow(new Object[]{
+                    portfolio.getSymbol(),
+                    portfolio.getShares(),
+                    String.format("%.2f$", portfolio.getPrice()),
+                    String.format("%.2f$", portfolio.getTotalValue()),
+                    String.format("%.2f$", profit),
+                    "Sell"
+                });
             }
-        } else{
-            System.out.println("No Portfolio to Show");
         }
 
     }
@@ -100,7 +106,7 @@ public class Portfolio_Viewer_Service {
                         continue;
                     }
                     String[] parts = line.split("\\|");
-                    if(parts.length>=2){
+                    if(parts.length>=3){
                         String symbol = parts[0];
                         int sharesHeld = Integer.parseInt(parts[1]);
                         double price = 0;
@@ -111,7 +117,8 @@ public class Portfolio_Viewer_Service {
                             }
                         }
                         double totalValue = sharesHeld*price;
-                        Portfolio portfolio = new Portfolio(symbol, sharesHeld, price, totalValue);
+                        double oldTotalValue = Double.parseDouble(parts[2]);
+                        Portfolio portfolio = new Portfolio(symbol, sharesHeld, price, totalValue, oldTotalValue);
                         portfolios.add(portfolio);
                     }
                 }

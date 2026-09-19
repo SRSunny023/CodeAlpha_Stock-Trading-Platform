@@ -177,6 +177,7 @@ public class Main_Screen extends JFrame implements ActionListener,MouseListener 
             "Shares Owned",
             "Price",
             "Total Value",
+            "Profit/Loss",
             "Action"
         };
 
@@ -188,9 +189,9 @@ public class Main_Screen extends JFrame implements ActionListener,MouseListener 
         };
 
         portfolioTable = new JTable(model);
-        portfolioTable.setFont(new Font("Arial", Font.BOLD, 16));
+        portfolioTable.setFont(new Font("Arial", Font.PLAIN, 16));
         portfolioTable.setRowHeight(30);
-        portfolioTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 18));
+        portfolioTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
         portfolioTable.getTableHeader().setBackground(Color.BLACK);
         portfolioTable.getTableHeader().setForeground(Color.WHITE);
         portfolioTable.setBackground(Color.BLACK);
@@ -412,7 +413,7 @@ public class Main_Screen extends JFrame implements ActionListener,MouseListener 
 
         }
 
-        if(clickedTable==portfolioTable && column==4){
+        if(clickedTable==portfolioTable && column==5){
 
             String symbol = (String) clickedTable.getValueAt(row, 0);
             String tempSharesOwned = (String) clickedTable.getValueAt(row, 1).toString();
@@ -469,10 +470,5 @@ public class Main_Screen extends JFrame implements ActionListener,MouseListener 
     public void mouseReleased(MouseEvent e){}
     public void mouseEntered(MouseEvent e){}
     public void mouseExited(MouseEvent e){}
-
-    public static void main(String[] args){
-        User mockUser = new User("mock@gmail.com", "Mock@111", "Mr. Mock", "1000");
-        new Main_Screen(mockUser);
-    }
 
 }

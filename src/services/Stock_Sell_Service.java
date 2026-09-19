@@ -144,11 +144,13 @@ public class Stock_Sell_Service {
                         continue;
                     }
                     String[] parts = line.split("\\|");
-                    if(parts.length>=2 && parts[0].equals(stock.getSymbol())){
+                    if(parts.length>=3 && parts[0].equals(stock.getSymbol())){
                         int oldAmount = Integer.parseInt(parts[1]);
                         int newAmount = oldAmount - amount;
+                        double oldTotalPrice = Double.parseDouble(parts[2]);
+                        double newTotalPrice = oldTotalPrice - totalPrice;
                         if(newAmount>0){
-                            line = parts[0] + "|" + newAmount;
+                            line = parts[0] + "|" + newAmount + "|" + newTotalPrice;
                             content.append(line);
                             content.append(System.lineSeparator());
                         }
