@@ -8,45 +8,61 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
 import model.Stock;
 import model.User;
 import util.Global_Variables;
 
 public class Stock_Sell_Service {
 
-    Stock stock;
-    User user;
-    int amount;
-    double totalPrice;
-    double userBalance;
+    private Stock stock;
+    private User user;
+    private int amount;
+    private double totalPrice;
+    private double userBalance;
+    private JFrame parentFrame;
 
-    public Stock_Sell_Service(Stock stock, User user, int amount){
+    public Stock_Sell_Service(Stock stock, User user, int amount, JFrame parentFrame){
         this.stock = stock;
         this.user = user;
         this.amount = amount;
-        sellStock();
+        this.parentFrame = parentFrame;
     }
 
-    private void sellStock(){
+    public boolean sellStock(){
 
         totalPrice = amount * stock.getPrice();
         userBalance = Double.parseDouble(user.getBalance());
 
         if(!haveEnoughShares()){
-            System.out.println("You have not enough shares to sell");
-            return;
+            JOptionPane.showMessageDialog(parentFrame, "You have not enough shares to sell", "Transaction Failed", JOptionPane.ERROR_MESSAGE);
+            return false;
         }
+
+        double newBalance = userBalance+totalPrice;
+
+        user.setBalance(Double.toString(newBalance));
 
         if(!updatePortfolio()){
-            System.out.println("Sell Failed!");
-            return;
+            user.setBalance(Double.toString(userBalance));
+            JOptionPane.showMessageDialog(parentFrame, "Couldn't Sell Shares!", "Transaction Failed", JOptionPane.ERROR_MESSAGE);
+            return false;
         }
 
-        System.out.println("Sell Successfull");
-        userBalance+=totalPrice;
-        user.setBalance(Double.toString(userBalance));
+        User_Balance_Update_Service balanceUpdate = new User_Balance_Update_Service(user, parentFrame);
 
-        new User_Balance_Update_Service(user);
+        boolean success = balanceUpdate.updateBalance();
+
+        if(success){
+            JOptionPane.showMessageDialog(parentFrame, "Shares Sold Successfully", "Transaction Successful", JOptionPane.INFORMATION_MESSAGE);
+            return true;
+        } else{
+            user.setBalance(Double.toString(userBalance));
+            JOptionPane.showMessageDialog(parentFrame,"Failed to update balance","Transaction Failed",JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
 
     }
 
@@ -79,7 +95,7 @@ public class Stock_Sell_Service {
             }
 
         } catch(Exception e){
-            System.err.println("An error occurred while handling files: " + e.getMessage());
+            JOptionPane.showMessageDialog(parentFrame, "An error occurred while handling files: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
 
@@ -117,12 +133,6 @@ public class Stock_Sell_Service {
                 System.out.println("File created: " + filePath.toAbsolutePath());
             }
 
-            Files.writeString(
-                transactionPath,
-                stock.getSymbol() + "|" + amount + "|" + totalPrice + "|" + "Sold" + System.lineSeparator(),
-                StandardOpenOption.APPEND
-            );
-
             StringBuilder content = new StringBuilder();
 
             try(BufferedReader br = new BufferedReader(new FileReader(filePath.toFile()))){
@@ -155,24 +165,20 @@ public class Stock_Sell_Service {
                 fw.write(content.toString());
             }
 
+            Files.writeString(
+                transactionPath,
+                stock.getSymbol() + "|" + amount + "|" + totalPrice + "|" + "Sold" + System.lineSeparator(),
+                StandardOpenOption.APPEND
+            );
+
             return true;
 
         } catch(Exception e){
-            System.err.println("An error occurred while handling files: " + e.getMessage());
+            JOptionPane.showMessageDialog(parentFrame, "An error occurred while handling files: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
 
         return false;
-
-    }
-
-    public static void main(String[] args){
-
-        new Stock_Sell_Service(
-            new Stock("APPL", "Abble Inc.", 182.50),
-            new User("mock@gmail.com", "Mock@111", "mr.mock", "3000"),
-            5
-        );
 
     }
 

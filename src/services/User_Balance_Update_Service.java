@@ -7,22 +7,25 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
 import model.User;
 import util.Global_Variables;
 
 public class User_Balance_Update_Service {
 
-    User user;
+    private User user;
+    private JFrame parentFrame;
 
-    public User_Balance_Update_Service(User user){
+    public User_Balance_Update_Service(User user, JFrame parentFrame){
 
         this.user = user;
-
-        updateBalance();
+        this.parentFrame = parentFrame;
 
     }
 
-    private void updateBalance(){
+    public boolean updateBalance(){
 
         try{
 
@@ -68,14 +71,17 @@ public class User_Balance_Update_Service {
             if (updated) {
                 try(FileWriter fw = new FileWriter(filePath.toFile())){
                     fw.write(content.toString());
+                    return true;
                 }
             } else {
-                System.out.println("User not found in user_list.txt.");
+                JOptionPane.showMessageDialog(parentFrame, "User not found in user_list.txt.", "Error", JOptionPane.ERROR_MESSAGE);
+                return false;
             }
 
         } catch(Exception e){
-            System.err.println("An error occurred while handling files: " + e.getMessage());
+            JOptionPane.showMessageDialog(parentFrame, "An error occurred while handling files: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
+            return false;
         }
 
     }

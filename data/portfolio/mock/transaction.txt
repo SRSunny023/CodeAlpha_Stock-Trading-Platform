@@ -2,3 +2,12 @@ APPL|5|912.5|Bought
 APPL|5|912.5|Bought
 APPL|5|912.5|Bought
 APPL|5|912.5|Sold
+APPL|3|567.3|Bought
+NFLX|1|608.71|Bought
+APPL|1|189.1|Bought
+SBUX|1|91.49|Bought
+DISN|1|112.23|Bought
+GOGL|2|299.78|Bought
+APPL|4|756.4|Sold
+APPL|5|945.5|Sold
+DISN|1|112.23|Sold

@@ -7,6 +7,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
+import javax.swing.JLabel;
+import javax.swing.table.DefaultTableModel;
+
 import model.Transaction;
 import model.User;
 import util.Global_Variables;
@@ -21,44 +24,24 @@ public class Transaction_History_Service {
     int totalSells = 0;
     double totalMoney = 0;
 
-    public Transaction_History_Service(User user){
+    public Transaction_History_Service(User user, DefaultTableModel model, JLabel[] labels){
 
         this.user = user;
 
         loadTransaction();
 
         if(!transactions.isEmpty()){
-            transactionDashboard();
-            viewTransactions();
-            transactionSummaryDashboard();
+            for(Transaction transaction : transactions){
+                model.addRow(new Object[]{transaction.getSymbol(), transaction.shares(), transaction.totalCost() + "$", transaction.action()});
+            }
+            labels[2].setText(transactions.size() + " ( " + totalBuys + " Buys / " + totalSells + " Sells)");
+            labels[3].setText(String.format("%.2f$", totalMoney));
         } else{
             System.out.println("TRANSACTION HISTORY REPORT");
             System.out.println("Account Owner: " + user.getName());
             System.out.println(" [!] No trade history found for this account.");
             System.out.println("=========================");
         }
-
-
-    }
-
-    private void transactionDashboard(){
-
-        System.out.println("TRANSACTION HISTORY REPORT");
-        System.out.println("=================================");
-        System.out.println("Account Owner: " + user.getName());
-        System.out.println("Current Balance: $" + user.getBalance());
-        System.out.println("=================================");
-        System.out.println("Symbol\tShares\tTotal Cost\tAction");
-        System.out.println("=================================");
-
-    }
-
-    private void transactionSummaryDashboard(){
-
-        System.out.println("=================================");
-        System.out.println("Total Operations Handled: " + transactions.size() + " ( " + totalBuys + " Buys / " + totalSells + " Sells)");
-        System.out.println("Cumulative Money Exchanged: " + totalMoney);
-        System.out.println("=================================");
 
     }
 
@@ -109,18 +92,6 @@ public class Transaction_History_Service {
             e.printStackTrace();
         }
 
-    }
-
-    private void viewTransactions(){
-        for(Transaction transaction : transactions){
-            System.out.println(transaction);
-        }
-    }
-
-    public static void main(String[] args){
-        new Transaction_History_Service(
-            new User("mock@gmail.com","Mock@111","mr.mock","3000")
-        );
     }
 
 }

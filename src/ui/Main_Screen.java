@@ -16,9 +16,15 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
+import model.Stock;
 import model.User;
+import services.Portfolio_Viewer_Service;
+import services.Stock_Buy_Service;
+import services.Stock_Sell_Service;
+import services.Transaction_History_Service;
 import services.Update_Password_Service;
 import services.View_Market_Service;
 import util.Global_Functions;
@@ -27,13 +33,15 @@ public class Main_Screen extends JFrame implements ActionListener,MouseListener 
 
     private User loggedInUser;
 
+    private boolean isListenerAdded = false;
+
     JButton[] buttons = new JButton[]{
         new JButton("Update Password"),
         new JButton("Logout"),
         new JButton("Exit"),
     };
 
-    JTable table;
+    JTable marketTable, portfolioTable, transactionTable;
 
     public Main_Screen(User loggedInUser){
 
@@ -56,6 +64,8 @@ public class Main_Screen extends JFrame implements ActionListener,MouseListener 
         setHeaderFooter();
 
         setViewMarketPanel();
+        setPortfolioViewPanel();
+        setTransactionViewPanel();
 
         setVisible(true);
 
@@ -94,17 +104,20 @@ public class Main_Screen extends JFrame implements ActionListener,MouseListener 
         }
 
         labels[2].setText(loggedInUser.getName());
-        labels[3].setText(loggedInUser.getBalance() + "$");
+        labels[3].setText(String.format("%.2f$", Double.parseDouble(loggedInUser.getBalance())));
 
         for(int i=0; i<buttons.length; i++){
             buttons[i].setForeground(Color.BLUE);
             buttons[i].setBackground(Color.GRAY);
             buttons[i].setFont(new Font("Arial", Font.BOLD, 16));
             buttons[i].setFocusPainted(false);
-            buttons[i].addActionListener(this);
+            if(!isListenerAdded){
+                buttons[i].addActionListener(this);
+            }
             buttons[i].setBounds(180 + (210*i), 20, 200, 30);
             footer.add(buttons[i]);
         }
+        isListenerAdded = true;
 
     }
 
@@ -127,17 +140,17 @@ public class Main_Screen extends JFrame implements ActionListener,MouseListener 
             }
         };
 
-        table = new JTable(model);
-        table.setFont(new Font("Arial", Font.BOLD, 16));
-        table.setRowHeight(30);
-        table.getTableHeader().setFont(new Font("Arial", Font.BOLD, 18));
-        table.getTableHeader().setBackground(Color.BLACK);
-        table.getTableHeader().setForeground(Color.WHITE);
-        table.setBackground(Color.BLACK);
-        table.setForeground(Color.WHITE);
-        table.addMouseListener(this);
+        marketTable = new JTable(model);
+        marketTable.setFont(new Font("Arial", Font.BOLD, 16));
+        marketTable.setRowHeight(30);
+        marketTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 18));
+        marketTable.getTableHeader().setBackground(Color.BLACK);
+        marketTable.getTableHeader().setForeground(Color.WHITE);
+        marketTable.setBackground(Color.BLACK);
+        marketTable.setForeground(Color.WHITE);
+        marketTable.addMouseListener(this);
 
-        scrollPane = new JScrollPane(table);
+        scrollPane = new JScrollPane(marketTable);
         scrollPane.setBounds(0, 77, 512, 613);
         scrollPane.getViewport().setBackground(Color.BLACK);
         scrollPane.getViewport().setForeground(Color.WHITE);
@@ -147,6 +160,132 @@ public class Main_Screen extends JFrame implements ActionListener,MouseListener 
         new View_Market_Service(model);
 
     }
+
+    private void setPortfolioViewPanel(){
+
+        JScrollPane scrollPane;
+        DefaultTableModel model;
+
+        String[] columns = new String[]{
+            "Symbol",
+            "Shares Owned",
+            "Price",
+            "Total Value",
+            "Action"
+        };
+
+        model = new DefaultTableModel(columns, 0){
+            @Override
+            public boolean isCellEditable(int row, int column){
+                return false;
+            }
+        };
+
+        portfolioTable = new JTable(model);
+        portfolioTable.setFont(new Font("Arial", Font.BOLD, 16));
+        portfolioTable.setRowHeight(30);
+        portfolioTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 18));
+        portfolioTable.getTableHeader().setBackground(Color.BLACK);
+        portfolioTable.getTableHeader().setForeground(Color.WHITE);
+        portfolioTable.setBackground(Color.BLACK);
+        portfolioTable.setForeground(Color.WHITE);
+        portfolioTable.addMouseListener(this);
+
+        scrollPane = new JScrollPane(portfolioTable);
+        scrollPane.setBounds(514, 77, 510, 306);
+        scrollPane.getViewport().setBackground(Color.BLACK);
+        scrollPane.getViewport().setForeground(Color.WHITE);
+
+        add(scrollPane);
+
+        new Portfolio_Viewer_Service(loggedInUser, model);
+
+    }
+
+    private void setTransactionViewPanel(){
+        JScrollPane scrollPane;
+        DefaultTableModel model;
+
+        String[] columns = new String[]{
+            "Symbol",
+            "Shares",
+            "Amount",
+            "Status"
+        };
+
+        model = new DefaultTableModel(columns, 0){
+            @Override
+            public boolean isCellEditable(int row, int column){
+                return false;
+            }
+        };
+
+        transactionTable = new JTable(model);
+        transactionTable.setFont(new Font("Arial", Font.BOLD, 16));
+        transactionTable.setRowHeight(30);
+        transactionTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 18));
+        transactionTable.getTableHeader().setBackground(Color.BLACK);
+        transactionTable.getTableHeader().setForeground(Color.WHITE);
+        transactionTable.setBackground(Color.BLACK);
+        transactionTable.setForeground(Color.WHITE);
+        transactionTable.addMouseListener(this);
+
+        scrollPane = new JScrollPane(transactionTable);
+        scrollPane.setBounds(514, 425, 510, 164);
+        scrollPane.getViewport().setBackground(Color.BLACK);
+        scrollPane.getViewport().setForeground(Color.WHITE);
+
+        JLabel label = new JLabel("Transaction History");
+        label.setFont(new Font("Arial", Font.BOLD, 16));
+        label.setForeground(Color.ORANGE);
+        label.setBounds(700, 395, 510, 20);
+
+        JLabel[] labels = new JLabel[]{
+            new JLabel("Total Operations:"),
+            new JLabel("Total Money Exchanged:"),
+            new JLabel(),
+            new JLabel(),
+        };
+
+        add(label);
+        add(scrollPane);
+
+        for(int i=0; i<labels.length; i++){
+            labels[i].setFont(new Font("Arial", Font.BOLD, 16));
+            labels[i].setForeground(Color.ORANGE);
+            if(i<2){
+                labels[i].setBounds(514, 595 + (50*i), 200, 30);
+            } else{
+                labels[i].setBounds(720, 595 + (50*(i-2)), 200, 30);
+            }
+            add(labels[i]);
+        }
+
+        new Transaction_History_Service(loggedInUser, model, labels);
+    }
+
+    private void refreshScreen(){
+
+        getContentPane().removeAll();
+
+        setHeaderFooter();
+        setViewMarketPanel();
+        setPortfolioViewPanel();
+        setTransactionViewPanel();
+
+        revalidate();
+        repaint();
+    }
+
+
+
+
+
+
+
+
+
+
 
     @Override
     public void actionPerformed(ActionEvent e){
@@ -198,15 +337,108 @@ public class Main_Screen extends JFrame implements ActionListener,MouseListener 
 
     public void mouseClicked(MouseEvent e){
 
-        int row = table.rowAtPoint(e.getPoint());
-        int column = table.columnAtPoint(e.getPoint());
+        JTable clickedTable = (JTable) e.getSource();
 
-        if(row!=-1 && column==3){
+        int row = clickedTable.rowAtPoint(e.getPoint());
+        int column = clickedTable.columnAtPoint(e.getPoint());
 
-            String tempPrice = (String) table.getValueAt(row, 2);
+        if(row==-1){
+            return;
+        }
+
+        if(clickedTable==marketTable && column==3){
+
+            String symbol = (String) clickedTable.getValueAt(row, 0);
+            String company = (String) clickedTable.getValueAt(row, 1);
+            String tempPrice = (String) clickedTable.getValueAt(row, 2);
             double price = Double.parseDouble(tempPrice.replace("$", ""));
+            Stock stock = new Stock(symbol, company, price);
 
-            System.out.println(price);
+            JPanel panel = new JPanel(new GridLayout(1, 2, 5, 5));
+            JLabel amountLabel = new JLabel("Share Amount:");
+            JTextField amountField = new JTextField();
+
+            panel.add(amountLabel);
+            panel.add(amountField);
+
+            int result = JOptionPane.showConfirmDialog(this, panel, "Shares to Buy", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+            if(result==JOptionPane.OK_OPTION){
+
+                try{
+
+                    int amount = Integer.parseInt(amountField.getText());
+
+                    if(amount <= 0){
+                        JOptionPane.showMessageDialog(this, "Share Amount Must Be Greater Than 0", "Invalid Amount", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+
+                    Stock_Buy_Service buyService = new Stock_Buy_Service(stock, loggedInUser, amount, this);
+
+                    boolean success = buyService.purchaseStock();
+
+                    if(success){
+                        refreshScreen();
+                    }
+
+                } catch(Exception ex){
+                    JOptionPane.showMessageDialog(this, "Amount Must Be In Integer!", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+            }
+
+        }
+
+        if(clickedTable==portfolioTable && column==4){
+
+            String symbol = (String) clickedTable.getValueAt(row, 0);
+            String tempSharesOwned = (String) clickedTable.getValueAt(row, 1).toString();
+            int sharesOwned = Integer.parseInt(tempSharesOwned.trim());
+            String tempPrice = (String) clickedTable.getValueAt(row, 2);
+            double price = Double.parseDouble(tempPrice.replace("$", ""));
+            Stock stock = new Stock(symbol, symbol, price);
+
+            JPanel panel = new JPanel(new GridLayout(1, 2, 5, 5));
+            JLabel amountLabel = new JLabel("Share Amount:");
+            JTextField amountField = new JTextField();
+
+            panel.add(amountLabel);
+            panel.add(amountField);
+
+            int result = JOptionPane.showConfirmDialog(this, panel, "Shares to Sell", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+            if(result==JOptionPane.OK_OPTION){
+
+                try{
+
+                    int amount = Integer.parseInt(amountField.getText());
+
+                    if(amount <= 0){
+                        JOptionPane.showMessageDialog(this,"Share Amount Must Be Greater Than 0","Invalid Amount",JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+
+                    if(amount > sharesOwned){
+                        JOptionPane.showMessageDialog(this, "You Have Not Enough Shares To Sell", "Invalid Amount", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+
+                    Stock_Sell_Service sellService = new Stock_Sell_Service(stock, loggedInUser, amount, this);
+
+                    boolean success = sellService.sellStock();
+
+                    if(success){
+                        refreshScreen();
+                    }
+
+                } catch(Exception ex){
+                    JOptionPane.showMessageDialog(this, "Amount Must Be In Integer!", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+            }
 
         }
 

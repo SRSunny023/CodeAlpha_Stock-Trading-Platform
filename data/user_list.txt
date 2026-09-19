@@ -1,2 +1,2 @@
 user@gmail.com|User@111|Mr. User|1000
-mock@gmail.com|Mock@111|Mr. Mock|1000
+mock@gmail.com|Mock@111|Mr. Mock|2057.73

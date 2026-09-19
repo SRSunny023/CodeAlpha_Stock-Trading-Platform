@@ -26,7 +26,7 @@ public class Portfolio {
         return this.price;
     }
 
-    public double totalValue(){
+    public double getTotalValue(){
         return this.totalValue;
     }
 

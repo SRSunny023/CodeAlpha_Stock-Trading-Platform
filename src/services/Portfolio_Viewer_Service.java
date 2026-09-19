@@ -8,6 +8,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
+import javax.swing.table.DefaultTableModel;
+
 import model.Portfolio;
 import model.Stock;
 import model.User;
@@ -21,7 +23,7 @@ public class Portfolio_Viewer_Service {
 
     ArrayList<Portfolio> portfolios = new ArrayList<>();
 
-    public Portfolio_Viewer_Service(User user){
+    public Portfolio_Viewer_Service(User user, DefaultTableModel model){
 
         this.user = user;
 
@@ -30,21 +32,12 @@ public class Portfolio_Viewer_Service {
         loadPortfolio();
 
         if(portfolios.size()>0){
-            portfolioDashboard();
-            viewPortfolio();
+            for(Portfolio portfolio : portfolios){
+                model.addRow(new Object[]{portfolio.getSymbol(), portfolio.getShares(), portfolio.getPrice() + "$", portfolio.getTotalValue() + "$", "Sell"});
+            }
         } else{
             System.out.println("No Portfolio to Show");
         }
-
-    }
-
-    private void portfolioDashboard(){
-
-        System.out.println("DASHBOARD");
-        System.out.println("Client Name: " + user.getName());
-        System.out.println("Client Balance: $" + user.getBalance());
-
-        System.out.printf("%-6s | %-11s | %-10s | %-10s\n", "Symbol", "Shares HELD", "Live Price", "Total Value");
 
     }
 
@@ -129,22 +122,6 @@ public class Portfolio_Viewer_Service {
             System.err.println("An error occurred while handling files: " + e.getMessage());
             e.printStackTrace();
         }
-
-    }
-
-    private void viewPortfolio(){
-
-        for(Portfolio portfolio : portfolios){
-            System.out.println(portfolio);
-        }
-
-    }
-
-    public static void main(String[] args){
-
-        new Portfolio_Viewer_Service(
-            new User("mock@gmail.com", "Mock@111", "mr.mock", "3000")
-        );
 
     }
 
