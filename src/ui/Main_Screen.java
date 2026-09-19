@@ -5,6 +5,8 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -12,12 +14,16 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 import model.User;
 import services.Update_Password_Service;
+import services.View_Market_Service;
 import util.Global_Functions;
 
-public class Main_Screen extends JFrame implements ActionListener {
+public class Main_Screen extends JFrame implements ActionListener,MouseListener {
 
     private User loggedInUser;
 
@@ -26,6 +32,8 @@ public class Main_Screen extends JFrame implements ActionListener {
         new JButton("Logout"),
         new JButton("Exit"),
     };
+
+    JTable table;
 
     public Main_Screen(User loggedInUser){
 
@@ -45,13 +53,15 @@ public class Main_Screen extends JFrame implements ActionListener {
         setLocationRelativeTo(null);
         setLayout(null);
 
-        setHeading();
+        setHeaderFooter();
+
+        setViewMarketPanel();
 
         setVisible(true);
 
     }
 
-    private void setHeading(){
+    private void setHeaderFooter(){
 
         JLabel[] labels = new JLabel[]{
             new JLabel("NAME:"),
@@ -95,6 +105,46 @@ public class Main_Screen extends JFrame implements ActionListener {
             buttons[i].setBounds(180 + (210*i), 20, 200, 30);
             footer.add(buttons[i]);
         }
+
+    }
+
+    private void setViewMarketPanel(){
+
+        JScrollPane scrollPane;
+        DefaultTableModel model;
+
+        String[] columns = new String[]{
+            "Symbol",
+            "Company",
+            "Price",
+            "Action"
+        };
+
+        model = new DefaultTableModel(columns, 0){
+            @Override
+            public boolean isCellEditable(int row, int column){
+                return false;
+            }
+        };
+
+        table = new JTable(model);
+        table.setFont(new Font("Arial", Font.BOLD, 16));
+        table.setRowHeight(30);
+        table.getTableHeader().setFont(new Font("Arial", Font.BOLD, 18));
+        table.getTableHeader().setBackground(Color.BLACK);
+        table.getTableHeader().setForeground(Color.WHITE);
+        table.setBackground(Color.BLACK);
+        table.setForeground(Color.WHITE);
+        table.addMouseListener(this);
+
+        scrollPane = new JScrollPane(table);
+        scrollPane.setBounds(0, 77, 512, 613);
+        scrollPane.getViewport().setBackground(Color.BLACK);
+        scrollPane.getViewport().setForeground(Color.WHITE);
+
+        add(scrollPane);
+
+        new View_Market_Service(model);
 
     }
 
@@ -145,6 +195,27 @@ public class Main_Screen extends JFrame implements ActionListener {
         }
 
     }
+
+    public void mouseClicked(MouseEvent e){
+
+        int row = table.rowAtPoint(e.getPoint());
+        int column = table.columnAtPoint(e.getPoint());
+
+        if(row!=-1 && column==3){
+
+            String tempPrice = (String) table.getValueAt(row, 2);
+            double price = Double.parseDouble(tempPrice.replace("$", ""));
+
+            System.out.println(price);
+
+        }
+
+    }
+
+    public void mousePressed(MouseEvent e){}
+    public void mouseReleased(MouseEvent e){}
+    public void mouseEntered(MouseEvent e){}
+    public void mouseExited(MouseEvent e){}
 
     public static void main(String[] args){
         User mockUser = new User("mock@gmail.com", "Mock@111", "Mr. Mock", "1000");

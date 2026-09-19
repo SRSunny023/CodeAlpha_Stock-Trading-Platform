@@ -8,6 +8,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
+import javax.swing.table.DefaultTableModel;
+
 import model.Stock;
 import util.Global_Variables;
 
@@ -15,12 +17,12 @@ public class View_Market_Service {
 
     public ArrayList<Stock> stocks = new ArrayList<>();
 
-    public View_Market_Service(){
+    public View_Market_Service(DefaultTableModel model){
 
         loadStocks();
 
         for(Stock stock : stocks){
-            System.out.println(stock);
+            model.addRow(new Object[]{stock.getSymbol(), stock.getCompany(), stock.getPrice() + "$", "Buy"});
         }
 
     }
@@ -61,10 +63,6 @@ public class View_Market_Service {
             e.printStackTrace();
         }
 
-    }
-
-    public static void main(String[] args){
-        new View_Market_Service();
     }
 
 }
