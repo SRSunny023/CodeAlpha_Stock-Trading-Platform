@@ -13,28 +13,35 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import javax.swing.SwingUtilities;
+
 import model.Stock;
+import model.User;
+import ui.Main_Screen;
 import util.Global_Variables;
 
 public class Market_Simulation_Service {
 
     private final ScheduledExecutorService scheduler;
     private final Random random;
+    private Main_Screen mainScreen;
 
-    public Market_Simulation_Service(){
+    User user;
 
+    public Market_Simulation_Service(User user, Main_Screen mainScreen){
+
+        this.user = user;
+        this.mainScreen = mainScreen;
         this.scheduler = Executors.newSingleThreadScheduledExecutor();
         this.random = new Random();
 
     }
 
     public void startSimulation(){
-        System.out.println("[MARKET SIMULATOR] Booting live stock price feeds...");
         scheduler.scheduleAtFixedRate(this::updateMarketPrices, 0, 10, TimeUnit.SECONDS);
     }
 
     public void stopSimulation(){
-        System.out.println("[MARKET SIMULATOR] Shutting down live stock price feeds...");
         scheduler.shutdown();
     }
 
@@ -45,7 +52,7 @@ public class Market_Simulation_Service {
             Path filePath = Paths.get(Global_Variables.STOCK_LIST_FILE);
 
             if(Files.notExists(filePath)){
-                System.err.println("[MARKET SIMULATOR ERROR] market_stocks.txt not found. Cannot simulate fluctuations.");
+                System.err.println("market_stocks.txt not found. Cannot simulate fluctuations.");
                 return;
             }
 
@@ -84,23 +91,12 @@ public class Market_Simulation_Service {
             try(FileWriter fw = new FileWriter(filePath.toFile())){
                 fw.write(content.toString());
             }
-            System.out.println("[MARKET SIMULATOR] Stock prices altered and saved successfully.");
+            SwingUtilities.invokeLater(() -> mainScreen.refreshScreen());
 
         } catch(Exception e){
-            System.err.println("[MARKET SIMULATOR CRITICAL] File update failure occurred: " + e.getMessage());
+            System.err.println("File update failure occurred: " + e.getMessage());
         }
 
-    }
-
-    public static void main(String[] args){
-        Market_Simulation_Service simulator = new Market_Simulation_Service();
-        simulator.startSimulation();
-        try{
-            Thread.sleep(35000);
-        } catch(Exception e){
-            e.printStackTrace();
-        }
-        simulator.stopSimulation();
     }
 
 }

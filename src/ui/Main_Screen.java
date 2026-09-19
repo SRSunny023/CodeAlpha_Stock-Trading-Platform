@@ -21,6 +21,7 @@ import javax.swing.table.DefaultTableModel;
 
 import model.Stock;
 import model.User;
+import services.Market_Simulation_Service;
 import services.Portfolio_Viewer_Service;
 import services.Stock_Buy_Service;
 import services.Stock_Sell_Service;
@@ -35,6 +36,8 @@ public class Main_Screen extends JFrame implements ActionListener,MouseListener 
 
     private boolean isListenerAdded = false;
 
+    private Market_Simulation_Service marketSimulator;
+
     JButton[] buttons = new JButton[]{
         new JButton("Update Password"),
         new JButton("Logout"),
@@ -48,6 +51,9 @@ public class Main_Screen extends JFrame implements ActionListener,MouseListener 
         this.loggedInUser = loggedInUser;
 
         initScreen();
+
+        marketSimulator = new Market_Simulation_Service(loggedInUser, this);
+        marketSimulator.startSimulation();
 
     }
 
@@ -264,7 +270,7 @@ public class Main_Screen extends JFrame implements ActionListener,MouseListener 
         new Transaction_History_Service(loggedInUser, model, labels);
     }
 
-    private void refreshScreen(){
+    public void refreshScreen(){
 
         getContentPane().removeAll();
 
@@ -275,6 +281,15 @@ public class Main_Screen extends JFrame implements ActionListener,MouseListener 
 
         revalidate();
         repaint();
+
+    }
+
+    public void stopMarketSimulation(){
+
+        if(marketSimulator != null){
+            marketSimulator.stopSimulation();
+            marketSimulator = null;
+        }
     }
 
 
@@ -324,11 +339,17 @@ public class Main_Screen extends JFrame implements ActionListener,MouseListener 
         }
 
         else if(e.getSource()==buttons[1]){     // Logout
+            if(marketSimulator != null){
+                marketSimulator.stopSimulation();
+            }
             new Global_Functions().logout(this, loggedInUser);
             return;
         }
 
         else if(e.getSource()==buttons[2]){     // Exit
+            if(marketSimulator != null){
+                marketSimulator.stopSimulation();
+            }
             new Global_Functions().exitApp(this);
             return;
         }
