@@ -27,7 +27,7 @@ public class User_Balance_Update_Service {
         try{
 
             Path folderPath = Paths.get(Global_Variables.DATA_FOLDER);
-            Path filePath = folderPath.resolve("user_list.txt");
+            Path filePath = folderPath.resolve(Global_Variables.USER_LIST_FILE);
 
             if(Files.notExists(folderPath)){
                 Files.createDirectories(folderPath);
@@ -54,10 +54,8 @@ public class User_Balance_Update_Service {
                         String password = parts[1];
                         String name = parts[2];
                         String balance = user.getBalance();
-                        String country = parts[4].trim();
-                        String phone = parts[5].trim();
 
-                        line = email + "|" + password + "|" + name + "|" + balance + "|" + country + "|" + phone;
+                        line = email + "|" + password + "|" + name + "|" + balance;
 
                         updated = true;
 

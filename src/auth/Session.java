@@ -58,14 +58,12 @@ public class Session {
                     continue;
                 }
                 String[] parts = line.split("\\|");
-                if(parts.length>0 && parts[0].trim().equalsIgnoreCase(email)){
+                if(parts.length>=Global_Variables.USER_DETAILS_LENGTH && parts[0].trim().equalsIgnoreCase(email)){
                     String userEmail = parts[0].trim();
                     String userPassword = parts[1].trim();
                     String userName = parts[2].trim();
                     String userBalance = parts[3].trim();
-                    String userCountry = parts.length>4 ? parts[4].trim() : "";
-                    String userPhone = parts.length>5 ? parts[5].trim() : "";
-                    User user = new User(userEmail, userPassword, userName, userBalance, userCountry, userPhone);
+                    User user = new User(userEmail, userPassword, userName, userBalance);
                     SwingUtilities.invokeLater(() -> new Main_Screen(user));
                     return;
                 }

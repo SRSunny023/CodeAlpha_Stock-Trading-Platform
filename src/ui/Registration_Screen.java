@@ -13,6 +13,8 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
+import util.Global_Functions;
+
 public class Registration_Screen extends JFrame implements ActionListener {
 
     String userEmail = "";
@@ -122,7 +124,7 @@ public class Registration_Screen extends JFrame implements ActionListener {
         if(e.getSource()==fields[0]){           // Email
             getResult();
             if(!userEmail.isEmpty() && !userPassword.isEmpty() && !userConfirmPassword.isEmpty() && !userName.isEmpty()){
-                new auth.Registration(userEmail, userPassword, userConfirmPassword, userName);
+                new auth.Registration(userEmail, userPassword, userConfirmPassword, userName, this);
                 return;
             }
             if(userEmail.isEmpty()){
@@ -135,7 +137,7 @@ public class Registration_Screen extends JFrame implements ActionListener {
         else if(e.getSource()==fields[1]){      // Name
             getResult();
             if(!userEmail.isEmpty() && !userPassword.isEmpty() && !userConfirmPassword.isEmpty() && !userName.isEmpty()){
-                new auth.Registration(userEmail, userPassword, userConfirmPassword, userName);
+                new auth.Registration(userEmail, userPassword, userConfirmPassword, userName, this);
                 return;
             }
             if(userName.isEmpty()){
@@ -148,7 +150,7 @@ public class Registration_Screen extends JFrame implements ActionListener {
         else if(e.getSource()==passFields[0]){      // Password
             getResult();
             if(!userEmail.isEmpty() && !userPassword.isEmpty() && !userConfirmPassword.isEmpty() && !userName.isEmpty()){
-                new auth.Registration(userEmail, userPassword, userConfirmPassword, userName);
+                new auth.Registration(userEmail, userPassword, userConfirmPassword, userName, this);
                 return;
             }
             if(userPassword.isEmpty()){
@@ -161,7 +163,7 @@ public class Registration_Screen extends JFrame implements ActionListener {
         else if(e.getSource()==passFields[1]){      // Confirm Password
             getResult();
             if(!userEmail.isEmpty() && !userPassword.isEmpty() && !userConfirmPassword.isEmpty() && !userName.isEmpty()){
-                new auth.Registration(userEmail, userPassword, userConfirmPassword, userName);
+                new auth.Registration(userEmail, userPassword, userConfirmPassword, userName, this);
                 return;
             }
             if(userConfirmPassword.isEmpty()){
@@ -174,7 +176,7 @@ public class Registration_Screen extends JFrame implements ActionListener {
         else if(e.getSource()==buttons[0]){     // Registration
             getResult();
             if(!userEmail.isEmpty() && !userPassword.isEmpty() && !userConfirmPassword.isEmpty() && !userName.isEmpty()){
-                new auth.Registration(userEmail, userPassword, userConfirmPassword, userName);
+                new auth.Registration(userEmail, userPassword, userConfirmPassword, userName, this);
                 return;
             }
             JOptionPane.showMessageDialog(this, "All Fields Must Be Filled!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -188,12 +190,7 @@ public class Registration_Screen extends JFrame implements ActionListener {
         }
 
         else if(e.getSource()==buttons[2]){     // Exit
-            int response = JOptionPane.showConfirmDialog(this, "Want to Exit?", "Exit", JOptionPane.YES_NO_OPTION);
-            if(response==JOptionPane.YES_OPTION){
-                setVisible(false);
-                dispose();
-                System.exit(0);
-            }
+            new Global_Functions().exitApp(this);
             return;
         }
 

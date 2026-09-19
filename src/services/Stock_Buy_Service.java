@@ -147,7 +147,7 @@ public class Stock_Buy_Service {
 
         new Stock_Buy_Service(
             new Stock("APPL", "Abble Inc.", 182.50),
-            new User("mock@gmail.com", "Mock@111", "mr.mock", "3000", "Bangladesh", "+880"),
+            new User("mock@gmail.com", "Mock@111", "mr.mock", "3000"),
             5
         );
 

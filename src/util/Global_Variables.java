@@ -11,7 +11,7 @@ public class Global_Variables {
     public static final String USER_LIST_FILE ="user_list.txt";
     public static final String CURRENT_SESSION ="current_session.txt";
 
-    public static final int USER_DETAILS_LENGTH = 6;
+    public static final int USER_DETAILS_LENGTH = 4;
 
     public static final String STOCK_LIST_FILE = DATA_FOLDER + "market_stocks.txt";
 

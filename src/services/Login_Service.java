@@ -8,33 +8,49 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+
 import model.User;
+import ui.Main_Screen;
 import util.Global_Variables;
 
 public class Login_Service {
 
     private User loggedInUser;
 
-    public Login_Service(String email, String password){
+    JFrame parentFrame;
+
+    public Login_Service(String email, String password, JFrame parentFrame){
+
+        this.parentFrame = parentFrame;
 
         boolean emailMatched = checkDuplicateEmail(email);
         boolean passwordMatched = checkPasswordMatch(email,password);
 
         if(!emailMatched){
-            System.out.println("Invalid Email Address");
+            JOptionPane.showMessageDialog(parentFrame, "Invalid Email Address!", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         if(!passwordMatched){
-            System.out.println("Invalid Password");
+            JOptionPane.showMessageDialog(parentFrame, "Invalid Password!", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         if(updateCurrentSession(email)){
-            this.loggedInUser = fetchUserProfile(email);
-            System.out.println("Welcome back, " + loggedInUser.getName() + "!");
+            loggedInUser = fetchUserProfile(email);
+            if(loggedInUser!=null){
+                JOptionPane.showMessageDialog(parentFrame, "Logging in Successfull!", "Logged In", JOptionPane.INFORMATION_MESSAGE);
+                parentFrame.setVisible(false);
+                parentFrame.dispose();
+                SwingUtilities.invokeLater(() -> new Main_Screen(loggedInUser));
+            } else {
+                JOptionPane.showMessageDialog(parentFrame, "User profile could not be loaded. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
         } else{
-            System.out.println("Unhandled Error Occurred! Login Failed.");
+            JOptionPane.showMessageDialog(parentFrame, "Unhandled Error Occurred! Login Failed.", "Error", JOptionPane.ERROR_MESSAGE);
         }
 
         return;
@@ -58,7 +74,7 @@ public class Login_Service {
                     continue;
                 }
                 String[] parts = line.split("\\|");
-                if(parts.length>0 && parts[0].trim().equalsIgnoreCase(email.trim())){
+                if(parts.length>=Global_Variables.USER_DETAILS_LENGTH && parts[0].trim().equalsIgnoreCase(email.trim())){
                     return true;
                 }
             }
@@ -88,7 +104,7 @@ public class Login_Service {
                     continue;
                 }
                 String[] parts = line.split("\\|");
-                if(parts.length>0 && parts[0].trim().equalsIgnoreCase(email) && password.trim().equals(parts[1].trim())){
+                if(parts.length>=Global_Variables.USER_DETAILS_LENGTH && parts[0].trim().equalsIgnoreCase(email) && password.trim().equals(parts[1].trim())){
                     return true;
                 }
             }
@@ -121,8 +137,7 @@ public class Login_Service {
             return true;
 
         } catch(IOException e){
-             System.err.println("An error occurred while handling files: " + e.getMessage());
-             e.printStackTrace();
+            JOptionPane.showMessageDialog(parentFrame, "An error occurred while handling files: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
 
         return false;
@@ -147,23 +162,20 @@ public class Login_Service {
                 }
                 String[] parts = line.split("\\|");
 
-                if(parts.length>0 && parts[0].trim().equalsIgnoreCase(email.trim())){
+                if(parts.length>=Global_Variables.USER_DETAILS_LENGTH && parts[0].trim().equalsIgnoreCase(email.trim())){
 
                     String userEmail = parts[0].trim();
                     String userPassword = parts[1].trim();
                     String userName = parts[2].trim();
                     String userBalance = parts[3].trim();
-                    String userCountry = parts.length>4 ? parts[4].trim() : "";
-                    String userPhone = parts.length>5 ? parts[5].trim() : "";
 
-                    return new User(userEmail,userPassword,userName,userBalance,userCountry,userPhone);
+                    return new User(userEmail,userPassword,userName,userBalance);
 
                 }
             }
 
         } catch(Exception e){
-            System.err.println("Error reading user profile: " + e.getMessage());
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(parentFrame, "Error reading user profile: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
 
         return null;

@@ -143,7 +143,7 @@ public class Portfolio_Viewer_Service {
     public static void main(String[] args){
 
         new Portfolio_Viewer_Service(
-            new User("mock@gmail.com", "Mock@111", "mr.mock", "3000", "Bangladesh", "+880")
+            new User("mock@gmail.com", "Mock@111", "mr.mock", "3000")
         );
 
     }

@@ -13,6 +13,8 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
+import util.Global_Functions;
+
 public class Login_Screen extends JFrame implements ActionListener {
 
     String userEmail = "";
@@ -100,7 +102,7 @@ public class Login_Screen extends JFrame implements ActionListener {
             userEmail = field.getText();
             userPassword = new String(passField.getPassword());
             if(!userEmail.isEmpty() && !userPassword.isEmpty()){
-                new auth.Login(userEmail, userPassword);
+                new auth.Login(userEmail, userPassword, this);
                 return;
             }
             if(userEmail.isEmpty()){
@@ -114,7 +116,7 @@ public class Login_Screen extends JFrame implements ActionListener {
             userEmail = field.getText();
             userPassword = new String(passField.getPassword());
             if(!userEmail.isEmpty() && !userPassword.isEmpty()){
-                new services.Login_Service(userEmail, userPassword);
+                new services.Login_Service(userEmail, userPassword, this);
                 return;
             }
             if(userPassword.isEmpty()){
@@ -128,7 +130,7 @@ public class Login_Screen extends JFrame implements ActionListener {
             userEmail = field.getText();
             userPassword = new String(passField.getPassword());
             if(!userEmail.isEmpty() && !userPassword.isEmpty()){
-                new auth.Login(userEmail, userPassword);
+                new auth.Login(userEmail, userPassword, this);
                 return;
             }
             JOptionPane.showMessageDialog(this, "Email or Password Field Can Not Be Remain Empty!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -142,12 +144,7 @@ public class Login_Screen extends JFrame implements ActionListener {
         }
 
         else if(e.getSource()==buttons[2]){     // Exit
-            int response = JOptionPane.showConfirmDialog(this, "Want to Exit?", "Exit", JOptionPane.YES_NO_OPTION);
-            if(response==JOptionPane.YES_OPTION){
-                setVisible(false);
-                dispose();
-                System.exit(0);
-            }
+            new Global_Functions().exitApp(this);
             return;
         }
 

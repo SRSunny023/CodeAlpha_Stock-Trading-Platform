@@ -9,6 +9,11 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.regex.Pattern;
 
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+
+import ui.Login_Screen;
 import util.Global_Variables;
 
 public class Registration_Service {
@@ -27,7 +32,11 @@ public class Registration_Service {
 
     private static final String INITIAL_BALANCE = "1000";
 
-    public Registration_Service(String email, String password, String confirmPassword, String name){
+    JFrame parentFrame;
+
+    public Registration_Service(String email, String password, String confirmPassword, String name, JFrame parentFrame){
+
+        this.parentFrame = parentFrame;
 
         boolean isValidEmail = validateEmailAddress(email);
         boolean isValidPass = validatePassword(password);
@@ -35,29 +44,32 @@ public class Registration_Service {
         boolean isDuplicateEmail = checkDuplicateEmail(email);
 
         if(!isValidEmail){
-            System.out.println("Email Not Valid");
+            JOptionPane.showMessageDialog(parentFrame, "Email Address is not valid!", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         if(!isValidPass){
-            System.out.println("Password Not Valid");
+            JOptionPane.showMessageDialog(parentFrame, "Password is not valid!", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         if(!isPassAndConfirmPassMatching){
-            System.out.println("Password and Confirm Password Not Matched");
+            JOptionPane.showMessageDialog(parentFrame, "Password Didn't Matched!", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         if(isDuplicateEmail){
-            System.out.println("Email Already Exist");
+            JOptionPane.showMessageDialog(parentFrame, "Email Already Exist!", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         if(saveUserToDatabase(email,password,name)){
-            System.out.println("Registration Completed");
+            JOptionPane.showMessageDialog(parentFrame, "Registration Completed", "Registration", JOptionPane.INFORMATION_MESSAGE);
+            parentFrame.setVisible(false);
+            parentFrame.dispose();
+            SwingUtilities.invokeLater(() -> new Login_Screen());
         } else{
-            System.out.println("Unhandled Error Occurred! Registration Failed.");
+            JOptionPane.showMessageDialog(parentFrame, "Unhandled Error Occurred! Registration Failed.", "Error", JOptionPane.ERROR_MESSAGE);
         }
 
         return;
@@ -78,6 +90,10 @@ public class Registration_Service {
     }
 
     private boolean checkPassAndConfirmPass(String password, String confirmPassword){
+
+        if(password == null || confirmPassword == null){
+            return false;
+        }
 
         return password.equals(confirmPassword);
 
@@ -100,7 +116,7 @@ public class Registration_Service {
                     continue;
                 }
                 String[] parts = line.split("\\|");
-                if(parts.length>0 && email.trim().equalsIgnoreCase(parts[0].trim())){
+                if(parts.length>=Global_Variables.USER_DETAILS_LENGTH && email.trim().equalsIgnoreCase(parts[0].trim())){
                     return true;
                 }
             }
@@ -122,25 +138,22 @@ public class Registration_Service {
 
             if(Files.notExists(folderPath)){
                 Files.createDirectories(folderPath);
-                System.out.println("Directory created: " + folderPath.toAbsolutePath());
             }
 
             if(Files.notExists(filePath)){
                 Files.createFile(filePath);
-                System.out.println("File created: " + filePath.toAbsolutePath());
             }
 
             Files.writeString(
                 filePath,
-                email + "|" + password + "|" + name + "|" + INITIAL_BALANCE + "|" + "" + "|" + "" + System.lineSeparator(),
+                email + "|" + password + "|" + name + "|" + INITIAL_BALANCE + System.lineSeparator(),
                 StandardOpenOption.APPEND
             );
 
             return true;
 
         } catch(IOException e){
-             System.err.println("An error occurred while handling files: " + e.getMessage());
-             e.printStackTrace();
+            JOptionPane.showMessageDialog(parentFrame, "An error occurred while handling files: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
 
         return false;

@@ -13,16 +13,12 @@ public class User {
         String email,
         String password,
         String name,
-        String balance,
-        String country,
-        String phoneNumber
+        String balance
     ){
         this.email = email;
         this.password = password;
         this.name = name;
         this.balance = balance;
-        this.country = country;
-        this.phoneNumber = phoneNumber;
     }
 
     public String getEmail(){
@@ -41,14 +37,6 @@ public class User {
         return this.balance;
     }
 
-    public String getCountry(){
-        return this.country;
-    }
-
-    public String getPhoneNumber(){
-        return this.phoneNumber;
-    }
-
     public void setEmail(String email){
         this.email = email;
     }
@@ -63,14 +51,6 @@ public class User {
 
     public void setBalance(String balance){
         this.balance = balance;
-    }
-
-    public void setCountry(String country){
-        this.country = country;
-    }
-
-    public void setPhoneNumber(String phoneNumber){
-        this.phoneNumber = phoneNumber;
     }
 
 }
