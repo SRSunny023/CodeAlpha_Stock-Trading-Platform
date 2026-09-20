@@ -1,3 +1,0 @@
-user@gmail.com|User@111|Mr. User|989.4000000000001
-user2@gmail.com|User@222|Mr. User 2|800.8299999999999
-User3@gmail.com|User@333|Mr. User 3|1000
