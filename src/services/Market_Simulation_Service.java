@@ -49,10 +49,10 @@ public class Market_Simulation_Service {
 
         try{
 
-            Path filePath = Paths.get(Global_Variables.STOCK_LIST_FILE);
+            Path folderPath = Paths.get(Global_Variables.DATA_FOLDER);
+            Path filePath = folderPath.resolve(Global_Variables.STOCK_LIST_FILE);
 
-            if(Files.notExists(filePath)){
-                System.err.println("market_stocks.txt not found. Cannot simulate fluctuations.");
+            if(Files.notExists(folderPath) || Files.notExists(filePath)){
                 return;
             }
 

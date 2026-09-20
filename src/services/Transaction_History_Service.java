@@ -1,5 +1,6 @@
 package services;
 
+import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.nio.file.Files;
@@ -23,6 +24,8 @@ public class Transaction_History_Service {
     int totalBuys = 0;
     int totalSells = 0;
     double totalMoney = 0;
+    double totalBoughtMoney = 0;
+    double totalSoldMoney = 0;
 
     public Transaction_History_Service(User user, DefaultTableModel model, JLabel[] labels){
 
@@ -34,8 +37,14 @@ public class Transaction_History_Service {
             for(Transaction transaction : transactions){
                 model.addRow(new Object[]{transaction.getSymbol(), transaction.shares(), String.format("%.2f$", transaction.totalCost()), transaction.action()});
             }
-            labels[2].setText(transactions.size() + " ( " + totalBuys + " Buys / " + totalSells + " Sells)");
-            labels[3].setText(String.format("%.2f$", totalMoney));
+            labels[3].setText(transactions.size() + " ( " + totalBuys + " Buys / " + totalSells + " Sells)");
+            labels[4].setText(String.format("%.2f$ ( Bought: %.2f$ / Sold: %.2f$ )", totalMoney,totalBoughtMoney,totalSoldMoney));
+            labels[5].setText(String.format("%.2f$", Math.abs(totalSoldMoney-totalBoughtMoney)));
+            if((totalSoldMoney-totalBoughtMoney) > 0){
+                labels[5].setForeground(Color.GREEN);
+            } else if((totalSoldMoney-totalBoughtMoney) < 0){
+                labels[5].setForeground(Color.RED);
+            }
         }
 
     }
@@ -50,7 +59,6 @@ public class Transaction_History_Service {
             Path transactionPath = folderPath.resolve("transaction.txt");
 
             if(Files.notExists(parentFolderPath) || Files.notExists(folderPath) || Files.notExists(transactionPath)){
-                System.out.println("Transaction History Not Found");
                 return;
             }
 
@@ -70,8 +78,10 @@ public class Transaction_History_Service {
                         String action = parts[3];
                         if(action.equals("Bought")){
                             totalBuys++;
+                            totalBoughtMoney+=totalCost;
                         } else if(action.equals("Sold")){
                             totalSells++;
+                            totalSoldMoney+=totalCost;
                         }
                         totalMoney+=totalCost;
                         Transaction transaction = new Transaction(symbol, shares, totalCost, action);

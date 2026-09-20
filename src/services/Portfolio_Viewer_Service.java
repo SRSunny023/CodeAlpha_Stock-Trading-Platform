@@ -51,10 +51,10 @@ public class Portfolio_Viewer_Service {
 
         try{
 
-            Path filePath = Paths.get(Global_Variables.STOCK_LIST_FILE);
+            Path folderPath = Paths.get(Global_Variables.DATA_FOLDER);
+            Path filePath = folderPath.resolve(Global_Variables.STOCK_LIST_FILE);
 
-            if(Files.notExists(filePath)){
-                System.out.println("market_stocks.txt not found. So couldn't load stocks");
+            if(Files.notExists(folderPath) || Files.notExists(filePath)){
                 return;
             }
 

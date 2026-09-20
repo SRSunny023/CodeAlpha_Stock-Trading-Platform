@@ -10,13 +10,17 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import model.User;
+import services.Market_Simulation_Service;
 import ui.Login_Screen;
 
 public class Global_Functions {
 
-    public void exitApp(JFrame parentFrame){
+    public void exitApp(JFrame parentFrame, Market_Simulation_Service marketSimulator){
         int response = JOptionPane.showConfirmDialog(parentFrame, "Want to Exit?", "Exit", JOptionPane.YES_NO_OPTION);
         if(response==JOptionPane.YES_OPTION){
+            if(marketSimulator != null){
+                marketSimulator.stopSimulation();
+            }
             parentFrame.setVisible(false);
             parentFrame.dispose();
             System.exit(0);
@@ -24,11 +28,14 @@ public class Global_Functions {
         return;
     }
 
-    public void logout(JFrame parenFrame, User loggedInUser){
+    public void logout(JFrame parenFrame, User loggedInUser, Market_Simulation_Service marketSimulator){
         int respone = JOptionPane.showConfirmDialog(parenFrame, "Want to logout?", "Logout", JOptionPane.YES_NO_OPTION);
         if(respone==JOptionPane.YES_OPTION){
             if(logoutService()){
                 JOptionPane.showMessageDialog(parenFrame, "Logout Successfull!", "Logout", JOptionPane.INFORMATION_MESSAGE);
+                if(marketSimulator != null){
+                    marketSimulator.stopSimulation();
+                }
                 parenFrame.setVisible(false);
                 parenFrame.dispose();
                 SwingUtilities.invokeLater(() -> new Login_Screen());

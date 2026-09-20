@@ -1,12 +1,20 @@
 package ui;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -17,8 +25,10 @@ import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
+import model.Portfolio;
 import model.Stock;
 import model.User;
 import services.Market_Simulation_Service;
@@ -29,6 +39,7 @@ import services.Transaction_History_Service;
 import services.Update_Password_Service;
 import services.View_Market_Service;
 import util.Global_Functions;
+import util.Global_Variables;
 
 public class Main_Screen extends JFrame implements ActionListener,MouseListener {
 
@@ -37,6 +48,10 @@ public class Main_Screen extends JFrame implements ActionListener,MouseListener 
     private boolean isListenerAdded = false;
 
     private Market_Simulation_Service marketSimulator;
+
+    private double currentPortfolio = 0;
+
+    private double oldPortfolio = 0;
 
     JButton[] buttons = new JButton[]{
         new JButton("Update Password"),
@@ -82,6 +97,8 @@ public class Main_Screen extends JFrame implements ActionListener,MouseListener 
         JLabel[] labels = new JLabel[]{
             new JLabel("NAME:"),
             new JLabel("BALANCE:"),
+            new JLabel("PORTFOLIO:"),
+            new JLabel(),
             new JLabel(),
             new JLabel(),
         };
@@ -101,16 +118,33 @@ public class Main_Screen extends JFrame implements ActionListener,MouseListener 
         for(int i=0; i<labels.length; i++){
             labels[i].setForeground(Color.BLUE);
             labels[i].setFont(new Font("Arial", Font.BOLD, 16));
-            if(i<2)
-                labels[i].setBounds(50 + (700*i), 20, 250, 30);
-            else
-                labels[i].setBounds(130 + (720*(i-2)), 20, 350, 30);
+            if(i==0){
+                labels[i].setBounds(50, 20, 250, 30);
+            } else if(i==1){
+                labels[i].setBounds(700, 10, 250, 30);
+            } else if(i==2){
+                labels[i].setBounds(700, 40, 250, 30);
+            } else if(i==3){
+                labels[i].setBounds(130, 20, 350, 30);
+            } else if(i==4){
+                labels[i].setBounds(815, 10, 350, 30);
+            } else
+                labels[i].setBounds(815, 40, 350, 30);
 
             header.add(labels[i]);
         }
 
-        labels[2].setText(loggedInUser.getName());
-        labels[3].setText(String.format("%.2f$", Double.parseDouble(loggedInUser.getBalance())));
+        labels[3].setText(loggedInUser.getName());
+        labels[4].setText(String.format("%.2f$", Double.parseDouble(loggedInUser.getBalance())));
+        portfolioValueCalculator();
+        labels[5].setText(String.format("%.2f$", currentPortfolio));
+        if((currentPortfolio-oldPortfolio) > 0){
+            labels[5].setForeground(Color.GREEN);
+        } else if((currentPortfolio-oldPortfolio) == 0){
+            labels[5].setForeground(Color.BLUE);
+        } else{
+            labels[5].setForeground(new Color(178, 0, 0));
+        }
 
         for(int i=0; i<buttons.length; i++){
             buttons[i].setForeground(Color.BLUE);
@@ -147,7 +181,16 @@ public class Main_Screen extends JFrame implements ActionListener,MouseListener 
         };
 
         marketTable = new JTable(model);
-        marketTable.setFont(new Font("Arial", Font.BOLD, 16));
+        marketTable.setFont(new Font("Arial", Font.PLAIN, 16));
+        marketTable.getColumnModel().getColumn(3).setCellRenderer(new DefaultTableCellRenderer(){
+            @Override
+            public Component getTableCellRendererComponent(JTable t, Object v, boolean s, boolean f, int r, int c) {
+                super.getTableCellRendererComponent(t, v, s, f, r, c);
+                setFont(new Font("Arial", Font.BOLD, 16));
+                setForeground(Color.ORANGE);
+                return this;
+            }
+        });
         marketTable.setRowHeight(30);
         marketTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 18));
         marketTable.getTableHeader().setBackground(Color.BLACK);
@@ -190,6 +233,44 @@ public class Main_Screen extends JFrame implements ActionListener,MouseListener 
 
         portfolioTable = new JTable(model);
         portfolioTable.setFont(new Font("Arial", Font.PLAIN, 16));
+        portfolioTable.getColumnModel().getColumn(5).setCellRenderer(new DefaultTableCellRenderer(){
+            @Override
+            public Component getTableCellRendererComponent(JTable t, Object v, boolean s, boolean f, int r, int c) {
+                super.getTableCellRendererComponent(t, v, s, f, r, c);
+                setFont(new Font("Arial", Font.BOLD, 16));
+                setForeground(Color.ORANGE);
+                return this;
+            }
+        });
+
+        portfolioTable.getColumnModel().getColumn(4).setCellRenderer(new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable t, Object v, boolean s, boolean f, int r, int c) {
+                super.getTableCellRendererComponent(t, v, s, f, r, c);
+                setFont(new Font("Arial", Font.PLAIN, 16));
+
+                if(v!=null){
+                    try {
+                        double value = Double.parseDouble(v.toString().replaceAll("[^0-9.-]", ""));
+                        setText(String.format("%.2f$", Math.abs(value)));
+                        if(value > 0){
+                            setForeground(Color.GREEN);
+                        } else if(value == 0) {
+                            setForeground(Color.WHITE);
+                        } else{
+                            setForeground(Color.RED);
+                        }
+                    } catch (NumberFormatException e) {
+                        setForeground(Color.WHITE);
+                    }
+                }
+                if(!s){
+                    setBackground(Color.BLACK);
+                }
+                return this;
+            }
+        });
+
         portfolioTable.setRowHeight(30);
         portfolioTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
         portfolioTable.getTableHeader().setBackground(Color.BLACK);
@@ -228,7 +309,7 @@ public class Main_Screen extends JFrame implements ActionListener,MouseListener 
         };
 
         transactionTable = new JTable(model);
-        transactionTable.setFont(new Font("Arial", Font.BOLD, 16));
+        transactionTable.setFont(new Font("Arial", Font.PLAIN, 16));
         transactionTable.setRowHeight(30);
         transactionTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 18));
         transactionTable.getTableHeader().setBackground(Color.BLACK);
@@ -249,7 +330,9 @@ public class Main_Screen extends JFrame implements ActionListener,MouseListener 
 
         JLabel[] labels = new JLabel[]{
             new JLabel("Total Operations:"),
-            new JLabel("Total Money Exchanged:"),
+            new JLabel("Money Exchanged:"),
+            new JLabel("Profit / Loss:"),
+            new JLabel(),
             new JLabel(),
             new JLabel(),
         };
@@ -258,12 +341,12 @@ public class Main_Screen extends JFrame implements ActionListener,MouseListener 
         add(scrollPane);
 
         for(int i=0; i<labels.length; i++){
-            labels[i].setFont(new Font("Arial", Font.BOLD, 16));
+            labels[i].setFont(new Font("Arial", Font.BOLD, 14));
             labels[i].setForeground(Color.ORANGE);
-            if(i<2){
-                labels[i].setBounds(514, 595 + (50*i), 200, 30);
+            if(i<3){
+                labels[i].setBounds(514, 595 + (30*i), 200, 30);
             } else{
-                labels[i].setBounds(720, 595 + (50*(i-2)), 200, 30);
+                labels[i].setBounds(680, 595 + (30*(i-3)), 400, 30);
             }
             add(labels[i]);
         }
@@ -291,6 +374,105 @@ public class Main_Screen extends JFrame implements ActionListener,MouseListener 
             marketSimulator.stopSimulation();
             marketSimulator = null;
         }
+    }
+
+    private void portfolioValueCalculator(){
+
+        ArrayList<Stock> stocks = new ArrayList<>();
+        ArrayList<Portfolio> portfolios = new ArrayList<>();
+
+        try{
+
+            Path folderPath = Paths.get(Global_Variables.DATA_FOLDER);
+            Path filePath = folderPath.resolve(Global_Variables.STOCK_LIST_FILE);
+
+            if(Files.notExists(folderPath) || Files.notExists(filePath)){
+                return;
+            }
+
+            try(BufferedReader br = new BufferedReader(new FileReader(filePath.toFile()))){
+
+                String line;
+
+                while((line=br.readLine())!=null){
+                    if(line.trim().isEmpty()){
+                        continue;
+                    }
+                    String[] parts = line.split("\\|");
+                    if(parts.length>=3){
+                        String symbol = parts[0];
+                        String company = parts[1];
+                        double price = Double.parseDouble(parts[2]);
+                        Stock stock = new Stock(symbol, company, price);
+                        stocks.add(stock);
+                    }
+                }
+
+            }
+
+        } catch (IOException | NumberFormatException e) {
+            System.err.println("An error occurred during file operation or parsing: " + e.getMessage());
+            e.printStackTrace();
+            return;
+        }
+
+        try{
+
+            String name = loggedInUser.getEmail().replaceAll("@.*", "");
+            Path parentFolderPath = Paths.get(Global_Variables.PORTFOLIO_FOLDER);
+            Path folderPath = parentFolderPath.resolve(name);
+            Path filePath = folderPath.resolve("portfolio.txt");
+
+            if(Files.notExists(parentFolderPath) || Files.notExists(folderPath) || Files.notExists(filePath)){
+                return;
+            }
+
+            try(BufferedReader br = new BufferedReader(new FileReader(filePath.toFile()))){
+
+                String line;
+                while((line=br.readLine())!=null){
+                    if(line.isEmpty()){
+                        continue;
+                    }
+                    String[] parts = line.split("\\|");
+                    if(parts.length>=3){
+                        String symbol = parts[0];
+                        int sharesHeld = Integer.parseInt(parts[1]);
+                        double price = 0;
+                        for(Stock stock : stocks){
+                            if(stock.getSymbol().equals(symbol)){
+                                price = stock.getPrice();
+                                break;
+                            }
+                        }
+                        double totalValue = sharesHeld*price;
+                        double oldTotalValue = Double.parseDouble(parts[2]);
+                        Portfolio portfolio = new Portfolio(symbol, sharesHeld, price, totalValue, oldTotalValue);
+                        portfolios.add(portfolio);
+                    }
+                }
+
+            }
+
+        } catch(Exception e){
+            System.err.println("An error occurred while handling files: " + e.getMessage());
+            e.printStackTrace();
+            return;
+        }
+
+        double totalPrice = 0;
+        double oldTotalPrice = 0;
+
+        if(portfolios.size()>0){
+            for(Portfolio portfolio : portfolios){
+                totalPrice+=portfolio.getTotalValue();
+                oldTotalPrice+=portfolio.getInitialTotalValue();
+            }
+        }
+
+        currentPortfolio = totalPrice;
+        oldPortfolio = oldTotalPrice;
+
     }
 
 
@@ -340,18 +522,12 @@ public class Main_Screen extends JFrame implements ActionListener,MouseListener 
         }
 
         else if(e.getSource()==buttons[1]){     // Logout
-            if(marketSimulator != null){
-                marketSimulator.stopSimulation();
-            }
-            new Global_Functions().logout(this, loggedInUser);
+            new Global_Functions().logout(this, loggedInUser, marketSimulator);
             return;
         }
 
         else if(e.getSource()==buttons[2]){     // Exit
-            if(marketSimulator != null){
-                marketSimulator.stopSimulation();
-            }
-            new Global_Functions().exitApp(this);
+            new Global_Functions().exitApp(this, marketSimulator);
             return;
         }
 

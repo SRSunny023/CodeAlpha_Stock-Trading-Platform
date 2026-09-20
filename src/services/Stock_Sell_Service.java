@@ -115,22 +115,18 @@ public class Stock_Sell_Service {
 
             if(Files.notExists(parentFolderPath)){
                 Files.createDirectories(parentFolderPath);
-                System.out.println("Directory created: " + parentFolderPath.toAbsolutePath());
             }
 
             if(Files.notExists(folderPath)){
                 Files.createDirectories(folderPath);
-                System.out.println("Directory created: " + folderPath.toAbsolutePath());
             }
 
             if(Files.notExists(transactionPath)){
                 Files.createFile(transactionPath);
-                System.out.println("File created: " + transactionPath.toAbsolutePath());
             }
 
             if(Files.notExists(filePath)){
                 Files.createFile(filePath);
-                System.out.println("File created: " + filePath.toAbsolutePath());
             }
 
             StringBuilder content = new StringBuilder();

@@ -32,6 +32,7 @@ public class Update_Password_Service {
 
         boolean isValidPass = validatePassword(password);
         boolean isPassAndConfirmPassMatching = checkPassAndConfirmPass(password, confirmPassword);
+        boolean isPasswordAlreadyUsing = checkPasswordExistance(password);
 
         if(!isValidPass){
             JOptionPane.showMessageDialog(parentFrame, "Password is not valid!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -43,9 +44,14 @@ public class Update_Password_Service {
             return;
         }
 
+        if(isPasswordAlreadyUsing){
+            JOptionPane.showMessageDialog(parentFrame, "You Are Already Using This Password! Choose Another Password", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         if(updatePassword(password)){
             user.setPassword(password);
-            JOptionPane.showMessageDialog(parentFrame, "Password Successfully Updated!", "Successfull", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(parentFrame, "Password Successfully Updated!", "Successful", JOptionPane.INFORMATION_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(parentFrame, "Failed to update password. Database error.", "Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -99,6 +105,38 @@ public class Update_Password_Service {
                 try(FileWriter fw = new FileWriter(filePath.toFile())){
                     fw.write(content.toString());
                     return true;
+                }
+            }
+
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return false;
+
+    }
+
+    private boolean checkPasswordExistance(String password){
+
+        Path folderPath = Paths.get(Global_Variables.DATA_FOLDER);
+        Path filePath = folderPath.resolve(Global_Variables.USER_LIST_FILE);
+
+        if(Files.notExists(folderPath) || Files.notExists(filePath)){
+            return false;
+        }
+
+        try(BufferedReader br = new BufferedReader(new FileReader(filePath.toFile()))){
+
+            String line;
+            while((line=br.readLine())!=null){
+                if(line.trim().isEmpty()){
+                    continue;
+                }
+                String[] parts = line.split("\\|");
+                if(parts.length>=Global_Variables.USER_DETAILS_LENGTH && user.getEmail().trim().equalsIgnoreCase(parts[0].trim())){
+                    if(parts[1].equals(password)){
+                        return true;
+                    }
                 }
             }
 

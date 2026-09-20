@@ -13,6 +13,6 @@ public class Global_Variables {
 
     public static final int USER_DETAILS_LENGTH = 4;
 
-    public static final String STOCK_LIST_FILE = DATA_FOLDER + "market_stocks.txt";
+    public static final String STOCK_LIST_FILE = "market_stocks.txt";
 
 }

@@ -190,7 +190,7 @@ public class Registration_Screen extends JFrame implements ActionListener {
         }
 
         else if(e.getSource()==buttons[2]){     // Exit
-            new Global_Functions().exitApp(this);
+            new Global_Functions().exitApp(this, null);
             return;
         }
 
