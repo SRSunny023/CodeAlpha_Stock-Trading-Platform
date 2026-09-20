@@ -5,8 +5,6 @@ public class User {
     private String email;
     private String password;
     private String name;
-    private String country;
-    private String phoneNumber;
     private String balance;
 
     public User(

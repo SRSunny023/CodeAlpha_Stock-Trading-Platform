@@ -101,7 +101,6 @@ Stock-Trading-Platform/
 │   │
 │   └── Main.java
 │
-├── data/...
 ├── resources/...
 ├── README.md
 └── .gitignore

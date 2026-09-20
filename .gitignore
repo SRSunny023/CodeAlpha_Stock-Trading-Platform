@@ -11,3 +11,4 @@ data/
 release/
 installer/
 manifest.txt
+bash.sh
