@@ -58,7 +58,7 @@ public class Transaction_History_Service {
             Path folderPath = parentFolderPath.resolve(name);
             Path transactionPath = folderPath.resolve("transaction.txt");
 
-            if(Files.notExists(parentFolderPath) || Files.notExists(folderPath) || Files.notExists(transactionPath)){
+            if(Files.notExists(folderPath) || Files.notExists(transactionPath)){
                 return;
             }
 

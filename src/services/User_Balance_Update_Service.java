@@ -32,10 +32,6 @@ public class User_Balance_Update_Service {
             Path folderPath = Paths.get(Global_Variables.DATA_FOLDER);
             Path filePath = folderPath.resolve(Global_Variables.USER_LIST_FILE);
 
-            if(Files.notExists(folderPath)){
-                Files.createDirectories(folderPath);
-            }
-
             if(Files.notExists(filePath)){
                 Files.createFile(filePath);
             }

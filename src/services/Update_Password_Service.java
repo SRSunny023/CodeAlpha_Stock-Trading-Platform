@@ -79,7 +79,7 @@ public class Update_Password_Service {
         Path folderPath = Paths.get(Global_Variables.DATA_FOLDER);
         Path filePath = folderPath.resolve(Global_Variables.USER_LIST_FILE);
 
-        if(Files.notExists(folderPath) || Files.notExists(filePath)){
+        if(Files.notExists(filePath)){
             return false;
         }
 
@@ -121,7 +121,7 @@ public class Update_Password_Service {
         Path folderPath = Paths.get(Global_Variables.DATA_FOLDER);
         Path filePath = folderPath.resolve(Global_Variables.USER_LIST_FILE);
 
-        if(Files.notExists(folderPath) || Files.notExists(filePath)){
+        if(Files.notExists(filePath)){
             return false;
         }
 

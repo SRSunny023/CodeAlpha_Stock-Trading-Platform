@@ -113,10 +113,6 @@ public class Stock_Sell_Service {
             Path transactionPath = folderPath.resolve("transaction.txt");
             Path filePath = folderPath.resolve("portfolio.txt");
 
-            if(Files.notExists(parentFolderPath)){
-                Files.createDirectories(parentFolderPath);
-            }
-
             if(Files.notExists(folderPath)){
                 Files.createDirectories(folderPath);
             }

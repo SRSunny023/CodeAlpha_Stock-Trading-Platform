@@ -1,0 +1,13 @@
+# IDE and environment configurations
+.vscode/
+
+# Build and compilation outputs
+out/
+
+# Application local runtime data folders (User records, logs, sessions)
+data/
+
+# Packaging and Installer outputs
+release/
+installer/
+manifest.txt

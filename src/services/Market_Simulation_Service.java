@@ -52,7 +52,7 @@ public class Market_Simulation_Service {
             Path folderPath = Paths.get(Global_Variables.DATA_FOLDER);
             Path filePath = folderPath.resolve(Global_Variables.STOCK_LIST_FILE);
 
-            if(Files.notExists(folderPath) || Files.notExists(filePath)){
+            if(Files.notExists(filePath)){
                 return;
             }
 

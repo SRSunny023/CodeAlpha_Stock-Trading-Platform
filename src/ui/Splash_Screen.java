@@ -5,13 +5,12 @@ import java.awt.Image;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.Timer;
-
-import util.Global_Variables;
 
 public class Splash_Screen extends JFrame {
 
-    public Splash_Screen(){
+    public Splash_Screen() {
 
         splashScreen();
 
@@ -33,7 +32,7 @@ public class Splash_Screen extends JFrame {
 
     }
 
-    private void splashScreen(){
+    private void splashScreen() {
 
         setUndecorated(true);
         setSize(1024, 768);
@@ -41,11 +40,29 @@ public class Splash_Screen extends JFrame {
         setLocationRelativeTo(null);
         setLayout(null);
 
-        Image scaledImage = new ImageIcon(Global_Variables.SPLASH_ICON).getImage().getScaledInstance(1024, 768, Image.SCALE_SMOOTH);
-        ImageIcon image = new ImageIcon(scaledImage);
-        JLabel label = new JLabel(image);
-        label.setBounds(0, 0, 1024, 768);
-        add(label);
+        java.net.URL imageUrl = getClass().getResource("/Welcome.png");
+
+        if (imageUrl == null) {
+            java.io.File physicalFile = new java.io.File("resources/Welcome.png");
+            if (physicalFile.exists()) {
+                try {
+                    imageUrl = physicalFile.toURI().toURL();
+                } catch (java.net.MalformedURLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        if (imageUrl != null) {
+            Image scaledImage = new ImageIcon(imageUrl).getImage().getScaledInstance(1024, 768, Image.SCALE_SMOOTH);
+            ImageIcon image = new ImageIcon(scaledImage);
+            JLabel label = new JLabel(image);
+            label.setBounds(0, 0, 1024, 768);
+            add(label);
+        } else {
+            JOptionPane.showMessageDialog(this, "Could not find splash icon resource: Welcome.png", "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
 
         setVisible(true);
 

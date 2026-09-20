@@ -62,7 +62,7 @@ public class Login_Service {
         Path folderPath = Paths.get(Global_Variables.DATA_FOLDER);
         Path filePath = folderPath.resolve(Global_Variables.USER_LIST_FILE);
 
-        if(Files.notExists(folderPath) || Files.notExists(filePath)){
+        if(Files.notExists(filePath)){
             return false;
         }
 
@@ -92,7 +92,7 @@ public class Login_Service {
         Path folderPath = Paths.get(Global_Variables.DATA_FOLDER);
         Path filePath = folderPath.resolve(Global_Variables.USER_LIST_FILE);
 
-        if(Files.notExists(folderPath) || Files.notExists(filePath)){
+        if(Files.notExists(filePath)){
             return false;
         }
 
@@ -124,15 +124,7 @@ public class Login_Service {
             Path folderPath = Paths.get(Global_Variables.DATA_FOLDER);
             Path filePath = folderPath.resolve(Global_Variables.CURRENT_SESSION);
 
-            if(Files.notExists(folderPath)){
-                Files.createDirectories(folderPath);
-            }
-
-            if(Files.notExists(filePath)){
-                Files.createFile(filePath);
-            }
-
-            Files.writeString(filePath, email, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+            Files.writeString(filePath, email, StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
 
             return true;
 
@@ -149,7 +141,7 @@ public class Login_Service {
         Path folderPath = Paths.get(Global_Variables.DATA_FOLDER);
         Path filePath = folderPath.resolve(Global_Variables.USER_LIST_FILE);
 
-        if(Files.notExists(folderPath) || Files.notExists(filePath)){
+        if(Files.notExists(filePath)){
             return null;
         }
 
